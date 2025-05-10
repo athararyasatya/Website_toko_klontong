@@ -1,111 +1,92 @@
-let isLoggedIn = false; // Awalnya user belum login
-let cartCount = 0; // Menghitung jumlah produk dalam cart
+let isLoggedIn = false;
+let cartCount = 0;
+const cartItems = {}; // Menyimpan produk yang sudah ditambahkan
 
 const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
 const registerModal = new bootstrap.Modal(document.getElementById('registerModal'));
-const cartOffcanvas = new bootstrap.Offcanvas(document.getElementById('cartSidebar')); // Inisialisasi cartOffcanvas di sini
+const cartOffcanvas = new bootstrap.Offcanvas(document.getElementById('cartSidebar'));
 
-// Event Listener untuk tombol Add to Cart
 document.addEventListener('DOMContentLoaded', function () {
     const addButtons = document.querySelectorAll('.btn-add-to-cart');
 
     addButtons.forEach((btn) => {
         btn.addEventListener('click', function (e) {
             if (!isLoggedIn) {
-                e.preventDefault(); // Cegah aksi default jika belum login
-                loginModal.show(); // Tampilkan modal login
+                e.preventDefault();
+                loginModal.show();
             } else {
-                const img = this.closest('.border').querySelector('.product-img');
-                animateToCart(img);
+                const productCard = this.closest('.product');
+                const productId = this.getAttribute('data-id');
+                const img = productCard.querySelector('.product-img');
+                const name = productCard.querySelector('.product-name').innerText;
+                const price = productCard.querySelector('.product-price').getAttribute('data-price');
+                const imgSrc = img.getAttribute('src');
 
-                // Update badge
+                animateToCart(img);
                 cartCount++;
                 const badge = document.getElementById('cartBadge');
                 badge.classList.remove('d-none');
                 badge.innerText = cartCount;
                 badge.classList.add('bounce-badge');
-
-                // Reset bounce animation so it can retrigger
                 setTimeout(() => badge.classList.remove('bounce-badge'), 600);
 
-                // Add to sidebar cart
-                updateCartSidebar('broccoli'); // Ganti dengan productId yang sesuai
+                updateCartSidebar(productId, name, price, imgSrc);
             }
         });
     });
 
-    // Tombol Keranjang
+    // Buka keranjang
     document.querySelectorAll('.open-cart').forEach(btn => {
         btn.addEventListener('click', function (e) {
-            console.log('isLoggedIn saat klik keranjang:', isLoggedIn); // Cek nilai isLoggedIn
+            e.preventDefault();
             if (!isLoggedIn) {
-                e.preventDefault();
                 loginModal.show();
             } else {
-                cartOffcanvas.show(); // Gunakan cartOffcanvas di sini
+                cartOffcanvas.show();
             }
         });
     });
 
-    // Mencegah scroll saat klik ikon keranjang (sekarang tidak perlu display: block)
-    const cartIcon = document.querySelector('.open-cart');
-    if (cartIcon) {
-        cartIcon.addEventListener('click', function (e) {
-            e.preventDefault(); // Mencegah aksi default scroll ke atas
-            // cartOffcanvas.show(); // Sekarang ditangani di atas
-        });
-    }
-
-    // Handler submit form login
+    // Login
     const loginForm = document.getElementById('loginForm');
     loginForm.addEventListener('submit', function (e) {
         e.preventDefault();
-
-        // Simulasi login sukses
         const email = document.getElementById('loginEmail').value;
         const password = document.getElementById('loginPassword').value;
-
         if (email && password) {
-            // Logika login sukses di sini (misalnya, cek email dan password)
             isLoggedIn = true;
-            loginModal.hide(); // Sembunyikan modal setelah login berhasil
+            loginModal.hide();
             alert('Login sukses!');
-            console.log('isLoggedIn setelah login:', isLoggedIn); // Cek nilai setelah login
         } else {
-            alert('Silakan masukkan email dan password yang benar.');
+            alert('Silakan masukkan email dan password.');
         }
     });
 
-    // Handler untuk link "Daftar di sini" pada modal login
+    // Register
     const showRegisterLink = document.getElementById('showRegister');
     showRegisterLink.addEventListener('click', function (e) {
         e.preventDefault();
-        loginModal.hide(); // Sembunyikan modal login
-        registerModal.show(); // Tampilkan modal register
+        loginModal.hide();
+        registerModal.show();
     });
 
-    // Handler submit form register
     const registerForm = document.getElementById('registerForm');
     registerForm.addEventListener('submit', function (e) {
         e.preventDefault();
-
-        // Simulasi registrasi sukses
         const name = document.getElementById('registerName').value;
         const email = document.getElementById('registerEmail').value;
         const password = document.getElementById('registerPassword').value;
-
         if (name && email && password) {
-            // Logika register sukses di sini (misalnya, kirim data ke server)
             alert('Akun berhasil dibuat!');
-            registerModal.hide(); // Sembunyikan modal register
-            loginModal.show(); // Tampilkan modal login setelah registrasi berhasil
+            registerModal.hide();
+            loginModal.show();
         } else {
             alert('Silakan isi semua kolom dengan benar.');
         }
     });
 });
 
-// Fungsi Animasi "Fly to Cart"
+// Animasi gambar ke keranjang
 function animateToCart(imgElement) {
     const cartIcon = document.querySelector('.open-cart i');
     const imgClone = imgElement.cloneNode(true);
@@ -134,45 +115,80 @@ function animateToCart(imgElement) {
     }, 900);
 }
 
-// Fungsi untuk update Sidebar Keranjang
-function updateCartSidebar(productId) {
+// Sidebar keranjang
+function updateCartSidebar(productId, name, price, imgSrc) {
     const sidebarBody = document.getElementById('cartSidebarBody');
+    let item = document.querySelector(`#sidebar-item-${productId}`);
 
-    // Cek apakah produk sudah ada di sidebar
-    const existingItem = document.querySelector(`#sidebar-item-${productId}`);
-    if (existingItem) {
+    if (item) {
         updateQty(productId, 1);
         return;
     }
 
-    // Jika belum ada, tambahkan produk baru
-    const item = document.createElement('div');
-    item.className = "d-flex justify-content-between align-items-center mb-2";
+    item = document.createElement('div');
+    item.className = "d-flex justify-content-between align-items-center mb-3";
     item.id = `sidebar-item-${productId}`;
     item.innerHTML = `
-        <div>
-            <strong>${productId}</strong><br>
-            <small class="text-muted">500gm</small>
+        <div class="d-flex align-items-start gap-2">
+          <img src="${imgSrc}" alt="${name}" width="50" height="50" style="object-fit:cover; border-radius:8px;">
+          <div>
+            <strong>${name}</strong><br>
+            <small class="text-muted">Rp${parseInt(price).toLocaleString()}</small>
+          </div>
         </div>
         <div class="d-flex align-items-center gap-1">
-            <button class="btn btn-sm btn-outline-secondary" onclick="updateQty('${productId}', -1)">−</button>
-            <span id="qty-${productId}">1</span>
-            <button class="btn btn-sm btn-outline-secondary" onclick="updateQty('${productId}', 1)">+</button>
+          <button class="btn btn-sm btn-outline-secondary" onclick="updateQty('${productId}', -1)">−</button>
+          <span id="qty-${productId}">1</span>
+          <button class="btn btn-sm btn-outline-secondary" onclick="updateQty('${productId}', 1)">+</button>
         </div>
     `;
     sidebarBody.appendChild(item);
 
-    // Tampilkan sidebar cart jika produk pertama ditambahkan (opsional, bisa dihilangkan jika ingin selalu hidden sampai tombol keranjang diklik)
-    // const sidebar = document.getElementById('cartSidebar');
-    // sidebar.style.display = 'block';
+    cartItems[productId] = {
+        name,
+        price: parseInt(price),
+        qty: 1
+    };
+
+    updateTotal();
 }
 
-// Fungsi untuk update kuantitas produk di sidebar
+// Ubah jumlah produk dan hapus jika qty 0
 function updateQty(productId, change) {
     const qtyElement = document.getElementById(`qty-${productId}`);
-    let qty = parseInt(qtyElement.innerText);
-    qty += change;
+    const currentQty = parseInt(qtyElement.innerText);
+    const newQty = currentQty + change;
 
-    if (qty < 1) qty = 1; // Minimum qty adalah 1
-    qtyElement.innerText = qty;
+    if (newQty < 1) {
+        const itemElement = document.getElementById(`sidebar-item-${productId}`);
+        if (itemElement) itemElement.remove();
+
+        cartCount -= currentQty;
+        if (cartCount <= 0) {
+            cartCount = 0;
+            document.getElementById('cartBadge').classList.add('d-none');
+        } else {
+            document.getElementById('cartBadge').innerText = cartCount;
+        }
+
+        delete cartItems[productId];
+    } else {
+        qtyElement.innerText = newQty;
+        cartItems[productId].qty = newQty;
+
+        cartCount += change;
+        document.getElementById('cartBadge').innerText = cartCount;
+    }
+
+    updateTotal();
+}
+
+// Hitung total
+function updateTotal() {
+    const totalElement = document.getElementById('cartTotal');
+    let total = 0;
+    for (let id in cartItems) {
+        total += cartItems[id].price * cartItems[id].qty;
+    }
+    totalElement.innerText = "Rp" + total.toLocaleString();
 }

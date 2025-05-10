@@ -1,175 +1,257 @@
 /* General Styling */
 body {
-    font-family: 'Montserrat', sans-serif;
-    background-color: #FDFEFC;
-    overflow-x: hidden;
-    
-  }
+  font-family: 'Montserrat', sans-serif;
+  background-color: #FDFEFC;
+  overflow-x: hidden;
   
-  /* Navbar */
-  .navbar-nav .nav-link {
-    font-weight: 500;
-    color: #334;
-  }
-  .navbar .btn {
-    font-size: 0.9rem;
-  }
-  
-  /* Hero Card Layout */
-  .hero-card {
-    max-width: 2000px;
-    height: 450px;
-  }
+}
 
-  
-  
-  /* Teks Hero */
-  .text-section {
-    overflow-y: auto;
-  }
-  .text-section .btn {
-    width: fit-content;
-    font-size: 0.8rem;
-    padding: 0.4rem 1rem;
-  }
-  
-  /* Image Styling */
-  .image-wrapper {
-    flex: 0 0 35%;
-    position: relative;
-  }
-  .hero-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: right;
-    border-top-right-radius: 1rem;
-    border-bottom-right-radius: 1rem;
-  }
-  
-  .custom-icon {
-    font-size: 24px;
-    color: #054D50;
-    margin-right: 8px;
-  }
-  
-  /* Scrollable Category Container */
-  .scroll-container {
-    display: flex;
-    overflow-x: auto;
-    overflow-y: hidden; /* prevent vertical scroll */
-    scroll-behavior: smooth;
-    -webkit-overflow-scrolling: touch;
-    gap: 1rem;
-    min-height: 140px; /* to stabilize layout */
-  }
-  
-  .scroll-container::-webkit-scrollbar {
-    display: none;
-  }
+/* Navbar */
+.navbar-nav .nav-link {
+  font-weight: 500;
+  color: #334;
+}
+.navbar .btn {
+  font-size: 0.9rem;
+}
 
-  .topbar {
-    background-color: #054D50;
-    font-size: 0.75rem;
-
-  }
-  
-  
-  /* Kategori Kecil Item */
-  .scroll-container > div {
-    flex-shrink: 0;
-    width: 150px;
-    opacity: 0;
-  
-    transition: all 0.6s ease;
-  }
-  
-  .scroll-container > div.show {
-    opacity: 1;
-    
-  }
-  
-  /* Promo Card */
-  .promo-card {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    opacity: 0;
-    will-change: transform, opacity;
-  }
-  .promo-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-  }
-  .promo-card.left {
-    transform: translateX(-50px);
-  }
-  .promo-card.right {
-    transform: translateX(50px);
-  }
-  .promo-card.show-left {
-    opacity: 1;
-    transform: translateX(0);
-    transition: all 0.6s ease;
-  }
-  .promo-card.show-right {
-    opacity: 1;
-    transform: translateX(0);
-    transition: all 0.6s ease;
-  }
+/* Hero Card Layout */
+.hero-card {
+  max-width: 2000px;
+  height: 450px;
+}
 
 
-  /* card problem*/
   
-  /* Tambahan untuk bikin input & tombol lebih clean */
+/* Teks Hero */
+.text-section {
+  overflow-y: auto;
+}
+.text-section .btn {
+  width: fit-content;
+  font-size: 0.8rem;
+  padding: 0.4rem 1rem;
+}
+
+/* Image Styling */
+.image-wrapper {
+  flex: 0 0 35%;
+  position: relative;
+}
+.hero-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: right;
+  border-top-right-radius: 1rem;
+  border-bottom-right-radius: 1rem;
+}
+
+.custom-icon {
+  font-size: 24px;
+  color: #054D50;
+  margin-right: 8px;
+}
+
+/* Scrollable Category Container */
+.scroll-container {
+  display: flex;
+  overflow-x: auto;
+  overflow-y: hidden; /* prevent vertical scroll */
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  gap: 1rem;
+  min-height: 140px; /* to stabilize layout */
+}
+
+.scroll-container::-webkit-scrollbar {
+  display: none;
+}
+
+.topbar {
+  background-color: #054D50;
+  font-size: 0.75rem;
+
+}
+
+
+/* Kategori Kecil Item */
+.scroll-container > div {
+  flex-shrink: 0;
+  width: 150px;
+  opacity: 0;
+
+  transition: all 0.6s ease;
+}
+
+.scroll-container > div.show {
+  opacity: 1;
+  
+}
+
+/* Promo Card */
+.promo-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  opacity: 0;
+  will-change: transform, opacity;
+}
+.promo-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+.promo-card.left {
+  transform: translateX(-50px);
+}
+.promo-card.right {
+  transform: translateX(50px);
+}
+.promo-card.show-left {
+  opacity: 1;
+  transform: translateX(0);
+  transition: all 0.6s ease;
+}
+.promo-card.show-right {
+  opacity: 1;
+  transform: translateX(0);
+  transition: all 0.6s ease;
+}
+
+
+/* card problem*/
+
+/* Tambahan untuk bikin input & tombol lebih clean */
 .modal-content {
-    border-radius: 1rem;
-  }
-  
-  input.form-control, select.form-select {
-    padding: 10px 15px;
-    border-radius: 50px;
-    border: 1px solid #ced4da;
-    transition: all 0.3s ease;
-  }
-  
-  input.form-control:focus, select.form-select:focus {
-    border-color: #28a745;
-    box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
-  }
-  
-  
-  /* Hero Animasi Khusus */
-  .hero-card {
-    opacity: 0;
-    transform: translateY(50px);
-    transition: all 0.8s ease;
-  }
-  .hero-card.show {
-    opacity: 1;
-    transform: translateY(0);
+  border-radius: 1rem;
+}
+
+input.form-control, select.form-select {
+  padding: 10px 15px;
+  border-radius: 50px;
+  border: 1px solid #ced4da;
+  transition: all 0.3s ease;
+}
+
+input.form-control:focus, select.form-select:focus {
+  border-color: #28a745;
+  box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+}
+
+
+/* Hero Animasi Khusus */
+.hero-card {
+  opacity: 0;
+  transform: translateY(50px);
+  transition: all 0.8s ease;
+}
+.hero-card.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.badge.bg-danger-subtle {
+  background-color: #fdecea;
+  color: #dc3545;
+}
+
+
+
+/* product */
+
+.product-img-wrapper {
+height: 150px;
+display: flex;
+align-items: center;
+justify-content: center;
+overflow: hidden;
+}
+
+.product-img {
+max-height: 100%;
+max-width: 100%;
+object-fit: contain;
+transition: transform 0.3s ease; /* Transisi halus */
+}
+
+.product-img-wrapper:hover .product-img {
+transform: scale(1.1); /* Zoom in saat hover */
+}
+
+.product-img-wrapper img {
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+/* Atur ulang layout harga dan tombol agar wrap saat sempit */
+.product .d-flex {
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+/* Atur harga diskon dan harga asli agar tidak bertumpuk */
+.product-price,
+.product .text-muted.text-decoration-line-through {
+  font-size: 0.875rem;
+}
+
+/* Atur responsivitas tombol "Add" */
+.btn-add-to-cart {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  white-space: nowrap;
+}
+
+/* Perbaiki jarak teks agar tidak numpuk */
+.product-name {
+  font-size: 0.9rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Atur buton add di hanpone */
+@media (max-width: 576px) {
+  .product {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
   }
 
-  .badge.bg-danger-subtle {
-    background-color: #fdecea;
-    color: #dc3545;
-  }
-  .product-img-wrapper {
-    height: 150px;
-    display: flex;
-    align-items: center;
+  .product .btn-add-to-cart {
+    margin-top: auto;
+    width: 100%;
     justify-content: center;
-    overflow: hidden;
   }
-  
-  .product-img {
-    max-height: 100%;
-    max-width: 100%;
-    object-fit: contain;
-    transition: transform 0.3s ease; /* Transisi halus */
+
+  .product .product-info {
+    flex-grow: 1;
   }
-  
-  .product-img-wrapper:hover .product-img {
-    transform: scale(1.1); /* Zoom in saat hover */
+}
+
+/* Atur buton add di tablet */
+
+@media (min-width: 577px) and (max-width: 768px) {
+  .product {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
   }
+
+  .product .btn-add-to-cart {
+    margin-top: auto;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .product .product-info {
+    flex-grow: 1;
+  }
+}
+
+
+
   /* animasi add barang */
   @keyframes bounce {
     0% { transform: scale(1); }
@@ -185,50 +267,48 @@ body {
   
   
 
-  /* Tombol scroll kiri/kanan */
+/* Tombol scroll kiri/kanan */
 .scroll-button {
-    background-color: #ffffff;
-    border: 1px solid #ccc;
-    color: #064F4E;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  }
-  
-  .scroll-button:hover {
-    background-color: #064F4E;
-    color: #fff;
-  }
+  background-color: #ffffff;
+  border: 1px solid #ccc;
+  color: #064F4E;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
 
-  /* gambar pengiriman */
-  
+.scroll-button:hover {
+  background-color: #064F4E;
+  color: #fff;
+}
+
 
   
-  /* Responsif */
-  @media (max-width: 768px) {
-    html{
-        overflow-x: hidden;
-    }
-    .delivery-container {
-      flex-direction: column;
-      text-align: center;
-    }
-  
-    .delivery-text {
-      max-width: 100%;
-      margin-bottom: 20px;
-    }
-  
-    .icon-text {
-      display: block;
-      margin-bottom: 10px;
-    }
-  
-    .btn-order {
-      font-size: 14px;
-      padding: 8px 20px;
-    }
+/* Responsif  delivery*/
+@media (max-width: 768px) {
+  html{
+      overflow-x: hidden;
   }
-  
+  .delivery-container {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .delivery-text {
+    max-width: 100%;
+    margin-bottom: 20px;
+  }
+
+  .icon-text {
+    display: block;
+    margin-bottom: 10px;
+  }
+
+  .btn-order {
+    font-size: 14px;
+    padding: 8px 20px;
+  }
+}
+
  
   .rating-section {
     background-color: #fff;
@@ -498,52 +578,102 @@ body {
     }
   }
   
-  /* Mobile Layout */
-  @media (max-width: 767px) {
-   
-    .hero-card {
-      position: relative;
-      height: 480px;
-      padding: 1rem;
-      background-image: url('../assets/person.png');
-      background-size: cover;
-      background-position: right top;
-      background-repeat: no-repeat;
-      border-radius: 1rem;
-    }
-  
-    .image-wrapper {
-      display: none;
-    }
-  
-    .text-section {
-      position: relative;
-      background-color: rgba(0, 0, 0, 0.6);
-      padding: 1.5rem;
-      border-radius: 1rem;
-      color: #fff;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      text-align: left;
-    }
-  
-    .text-section h2,
-    .text-section p {
-      color: #fff;
-      text-align: left;
-    }
-  
-    .text-section .btn {
-      width: fit-content;
-      font-size: 0.8rem;
-      padding: 0.4rem 1rem;
-    }
-  
-    .nav-awal, i {
-      font-size: 10px;
-    }
-    
+  /* Mobile Layout */@media (max-width: 767px) {
+  /* HERO SECTION RESPONSIF */
+  .hero-card {
+    position: relative;
+    height: 480px;
+    padding: 1rem;
+    background-image: url('../assets/person.png');
+    background-size: cover;
+    background-position: right top;
+    background-repeat: no-repeat;
+    border-radius: 1rem;
   }
-  
+
+  .image-wrapper {
+    display: none;
+  }
+
+  .text-section {
+    position: relative;
+    background-color: rgba(0, 0, 0, 0.6);
+    padding: 1.5rem;
+    border-radius: 1rem;
+    color: #fff;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: left;
+  }
+
+  .text-section h2,
+  .text-section p {
+    color: #fff;
+    text-align: left;
+  }
+
+  .text-section .btn {
+    width: fit-content;
+    font-size: 0.8rem;
+    padding: 0.4rem 1rem;
+  }
+
+  .nav-awal, i {
+    font-size: 10px;
+  }
+
+  /* SIDEBAR KERANJANG SETENGAH TINGGI */
+  #cartSidebar {
+    height: 50vh !important;
+    top: auto;
+    bottom: 0;
+    border-top-left-radius: 1rem;
+    border-top-right-radius: 1rem;
+  }
+
+  #cartSidebar .offcanvas-body {
+    padding: 1rem;
+  }
+
+  .cart-footer {
+    font-size: 0.9rem;
+  }
+
+  /* ITEM KERANJANG KE CILIK */
+  .cart-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+  }
+
+  .cart-item img {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+  }
+
+  /* === NAVBAR STICKY + SUSUN ULANG URUTAN === */
+   .navbar-nav {
+    align-items: flex-start !important; /* buat item sejajar kiri */
+    margin-left: 0 !important;
+    padding-left: 1rem;
+  }
+
+  .navbar-nav .nav-link {
+    text-align: left;
+    width: 100%;
+    padding-left: 0;
+  }
+
+  .cart-login-wrap {
+    align-self: flex-start;
+    padding-left: 1rem;
+  }
+
+  .navbar-collapse > .d-flex {
+    align-items: flex-start !important;
+  }
+}

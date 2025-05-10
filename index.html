@@ -16,9 +16,9 @@
 </head>
 <body>
 
- <!-- Top Bar -->
+ 
   <!-- Top Bar -->
-  <div id="topBar" class="text-white py-1 px-3 d-flex flex-wrap justify-content-between align-items-center small nav-awal" style="background-color: #054D50;">
+  <div id="topBar" class="text-white py-1 px-3 d-flex flex-wrap justify-content-betwen align-items-center small nav-awal" style="background-color: #054D50;">
     <div class="d-flex align-items-center gap-3 flex-wrap">
       <div><i class="bi bi-geo-alt-fill me-1"></i> BSD Modern Market, Jl. Letnan Sutopo, Banten 15111</div>
       <div><i class="bi bi-clock me-1"></i> Setiap hari dari 08:00 Sampai 18:00 WIB</div>
@@ -27,46 +27,54 @@
   </div>
 
   <!-- Navbar -->
-  <nav id="mainNavbar" class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+  <nav id="mainNavbar" class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
     <div class="container">
       <div class="d-flex flex-column">
         <a class="navbar-brand fw-bold " href="#">Kloontongin</a>
-        <small class="text-muted">Siap melayani kebutuhan anda</small>
+        <small class="text-muted" style="font-size: 13px;">Siap melayani kebutuhan anda</small>
       </div>
   
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
         <span class="navbar-toggler-icon"></span>
       </button>
   
-      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-        <ul class="navbar-nav mx-auto mx-lg-0">
-          <li class="nav-item"><a class="nav-link" href="#">Dashboard</a></li>
-          <li class="nav-item"><a class="nav-link" href="#kategori">Kategori</a></li>
-          <li class="nav-item"><a class="nav-link" href="#produk">Belanja</a></li>
-          <li class="nav-item"><a class="nav-link" href="#">Review pelanggan</a></li>
-        </ul>
-        <div class="d-flex gap-3 align-items-center ms-lg-3">
-          <a href="#" class="text-dark text-decoration-none d-flex align-items-center position-relative open-cart">
-            <i class="bi bi-basket custom-icon fs-5"></i>
-            <span class="ms-1">Keranjang</span>
-            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger d-none" id="cartBadge">0</span>
-          </a>
-          <a href="#" class="text-dark text-decoration-none d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#loginModal">
-            <i class="bi bi-person-circle custom-icon"></i><span class="ms-1">Login</span>
-          </a>
+        <div class="collapse navbar-collapse w-100" id="navbarNav">
+          <div class="d-flex justify-content-between align-items-center w-100 flex-wrap flex-lg-nowrap">
+
+            <!-- Menu navbar di tengah -->
+            <ul class="navbar-nav mx-auto">
+              <li class="nav-item"><a class="nav-link" href="#">Dashboard</a></li>
+              <li class="nav-item"><a class="nav-link" href="#kategori">Kategori</a></li>
+              <li class="nav-item"><a class="nav-link" href="#produk">Belanja</a></li>
+              <li class="nav-item"><a class="nav-link" href="#">Review pelanggan</a></li>
+            </ul>
+
+            <!-- Keranjang & Login di kanan -->
+            <div class="d-flex gap-3 align-items-center">
+              <a href="#" class="text-dark text-decoration-none d-flex align-items-center position-relative open-cart">
+                <i class="bi bi-basket custom-icon fs-5"></i>
+                <span class="ms-1">Keranjang</span>
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger d-none" id="cartBadge">0</span>
+              </a>
+              <a href="#" class="text-dark text-decoration-none d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#loginModal">
+                <i class="bi bi-person-circle custom-icon"></i><span class="ms-1">Login</span>
+              </a>
+            </div>
+
+          </div>
         </div>
-      </div>
+
     </div>
   </nav>
 
   <!-- Offcanvas Cart -->
-  <div class="offcanvas offcanvas-end" tabindex="-1" id="cartSidebar" aria-labelledby="cartSidebarLabel">
+  <!-- <div class="offcanvas offcanvas-end" tabindex="-1" id="cartSidebar" aria-labelledby="cartSidebarLabel">
     <div class="offcanvas-header">
       <h5 id="cartSidebarLabel">Keranjang Anda</h5>
       <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body">
-      <!-- Contoh item keranjang -->
+    
       <div class="d-flex justify-content-between align-items-center mb-2">
         <div>
           <strong>Organic Broccoli</strong><br>
@@ -78,10 +86,7 @@
           <button class="btn btn-sm btn-outline-secondary" onclick="updateQty('broccoli', 1)">+</button>
         </div>
       </div>
-      
-  
       <hr>
-  
       <div class="d-flex justify-content-between fw-bold">
         <span>Total</span>
         <span>$42</span>
@@ -89,7 +94,31 @@
   
       <button class="btn btn-success w-100 mt-3">Checkout</button>
     </div>
+  </div> -->
+
+  <!-- Offcanvas Cart -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="cartSidebar" data-bs-scroll="true" data-bs-backdrop="false">
+
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title">Keranjang Belanja</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
   </div>
+  <div class="offcanvas-body d-flex flex-column p-0">
+    <!-- Scrollable area -->
+    <div id="cartSidebarBody" class="p-3 overflow-auto flex-grow-1"></div>
+
+    <!-- Sticky footer -->
+    <div class="cart-footer p-3 border-top bg-white">
+      <div class="d-flex justify-content-between mb-2">
+        <strong>Total:</strong>
+        <span id="cartTotal">Rp0</span>
+      </div>
+      <button class="btn btn-success w-100">Checkout</button>
+    </div>
+  </div>
+</div>
+
+
 
 <!-- Modal Login -->
 <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
@@ -193,7 +222,7 @@
   </section>
 
 
-    <!-- Featured Categories Section -->
+    <!-- Kategori populer Section -->
     <section id="kategori" class="py-5 bg-light">
         <div class="container">
         <!-- Judul dan Tombol Panah -->
@@ -205,8 +234,7 @@
                   </button>
                   <button id="scrollRight" class="scroll-button btn rounded-circle d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;">
                     <i class="bi bi-chevron-right"></i>
-                  </button>
-                  
+                  </button> 
             </div>
         </div>
     
@@ -287,7 +315,6 @@
         </div>
     </div>
         <!-- 2 Card Besar -->
-       
         <div class="row mt-4 g-4">
             <!-- Kartu 1 -->
             <div class="col-md-6">
@@ -314,7 +341,7 @@
         </div>
     </section>
 
-
+   <!-- Produkk -->
     <section id="produk" class="py-5 bg-white">
         <div  class="container">
       
@@ -333,297 +360,285 @@
             <button class="btn btn-outline-secondary btn-sm rounded-pill px-4 py-2">🧂 Bumbu Masak</button>
             <button class="btn btn-outline-secondary btn-sm rounded-pill px-4 py-2">🍜 Makanan Instan</button>
           </div>
-      
           <!-- Kartu Produk -->
-<div class="row g-4">
-    <!-- Produk 1 -->
-    <div class="col-6 col-md-4 col-lg-3 product ">
-      <div class="border rounded-4 p-3 shadow-sm h-100 position-relative">
-        <span class="badge bg-info position-absolute top-0 start-0 m-2">New</span>
-        <div class="product-img-wrapper mb-3">
-          <img src="assets/brokoli.png" alt="Broccoli" class="product-img" />
-        </div>
-        <small class="text-muted">Sayuran</small>
-        <h6 class="fw-bold">Brokoli</h6>
-        <p class="mb-1 text-muted small">500gm</p>
-        <div class="d-flex justify-content-between align-items-center">
-          <strong>$12</strong>
-          <button class="btn btn-sm btn-outline-dark rounded-pill d-flex align-items-center btn-add-to-cart">
-            <i class="bi bi-cart me-1"></i> Add
-          </button>
-        </div>
-      </div>
-    </div>
-  
-    <!-- Produk 2 -->
-    <div class="col-6 col-md-4 col-lg-3 product">
-      <div class="border rounded-4 p-3 shadow-sm h-100 position-relative">
-        <span class="badge bg-success position-absolute top-0 start-0 m-2">Populer</span>
-        <div class="product-img-wrapper mb-3">
-          <img src="assets/tehbotol.png" alt="Teh Botol" class="product-img" />
-        </div>
-        <small class="text-muted">Minuman</small>
-        <h6 class="fw-bold">Teh Botol</h6>
-        <p class="mb-1 text-muted small">350ml</p>
-        <div class="d-flex justify-content-between align-items-center">
-          <strong>$5</strong>
-          <button class="btn btn-sm btn-outline-dark rounded-pill d-flex align-items-center btn-add-to-cart">
-            <i class="bi bi-cart me-1"></i> Add
-          </button>
-        </div>
-      </div>
-    </div>
-  
-    <!-- Produk 3 -->
-    <div class="col-6 col-md-4 col-lg-3 product">
-      <div class="border rounded-4 p-3 shadow-sm h-100 position-relative">
-        <span class="badge bg-danger position-absolute top-0 start-0 m-2">Diskon</span>
-        <div class="product-img-wrapper mb-3">
-          <img src="assets/minyak.png" alt="Minyak Goreng" class="product-img" />
-        </div>
-        <small class="text-muted">Minyak</small>
-        <h6 class="fw-bold">Minyak Goreng</h6>
-        <p class="mb-1 text-muted small">1L</p>
-        <div class="d-flex justify-content-between align-items-center">
-          <strong><del class="text-muted me-2">$10</del> $8</strong>
-          <button class="btn btn-sm btn-outline-dark rounded-pill d-flex align-items-center btn-add-to-cart">
-            <i class="bi bi-cart me-1"></i> Add
-          </button>
-        </div>
-      </div>
-    </div>
-  
-    <!-- Produk 4 -->
-    <div class="col-6 col-md-4 col-lg-3 product">
-      <div class="border rounded-4 p-3 shadow-sm h-100 position-relative">
-        <span class="badge bg-warning text-dark position-absolute top-0 start-0 m-2">Populer</span>
-        <div class="product-img-wrapper mb-3">
-          <img src="assets/indomi.png" alt="Indomie Goreng" class="product-img" />
-        </div>
-        <small class="text-muted">Makanan Instan</small>
-        <h6 class="fw-bold">Indomie Goreng</h6>
-        <p class="mb-1 text-muted small">1 pcs</p>
-        <div class="d-flex justify-content-between align-items-center">
-          <strong>$2</strong>
-          <button class="btn btn-sm btn-outline-dark rounded-pill d-flex align-items-center btn-add-to-cart">
-            <i class="bi bi-cart me-1"></i> Add
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-6 col-md-4 col-lg-3 product"> 
-        <div class="border rounded-4 p-3 shadow-sm h-100 position-relative">
-          <span class="badge bg-info position-absolute top-0 start-0 m-2">New</span>
-          <div class="product-img-wrapper mb-3">
-            <img src="assets/brokoli.png" alt="Broccoli" class="product-img" />
-          </div>
-          <small class="text-muted">Sayuran</small>
-          <h6 class="fw-bold">Brokoli</h6>
-          <p class="mb-1 text-muted small">500gm</p>
-          <div class="d-flex justify-content-between align-items-center">
-            <strong>$12</strong>
-            <button class="btn btn-sm btn-outline-dark rounded-pill d-flex align-items-center btn-add-to-cart">
-              <i class="bi bi-cart me-1"></i> Add
-            </button>
-          </div>
-        </div>
-      </div>
-    
-      <!-- Produk 2 -->
-      <div class="col-6 col-md-4 col-lg-3 product">
-        <div class="border rounded-4 p-3 shadow-sm h-100 position-relative">
-          <span class="badge bg-success position-absolute top-0 start-0 m-2">Populer</span>
-          <div class="product-img-wrapper mb-3">
-            <img src="assets/tehbotol.png" alt="Teh Botol" class="product-img" />
-          </div>
-          <small class="text-muted">Minuman</small>
-          <h6 class="fw-bold">Teh Botol</h6>
-          <p class="mb-1 text-muted small">350ml</p>
-          <div class="d-flex justify-content-between align-items-center">
-            <strong>$5</strong>
-            <button class="btn btn-sm btn-outline-dark rounded-pill d-flex align-items-center btn-add-to-cart">
-              <i class="bi bi-cart me-1"></i> Add
-            </button>
-          </div>
-        </div>
-      </div>
-    
-      <!-- Produk 3 -->
-      <div class="col-6 col-md-4 col-lg-3 product">
-        <div class="border rounded-4 p-3 shadow-sm h-100 position-relative">
-          <span class="badge bg-danger position-absolute top-0 start-0 m-2">Diskon</span>
-          <div class="product-img-wrapper mb-3">
-            <img src="assets/minyak.png" alt="Minyak Goreng" class="product-img" />
-          </div>
-          <small class="text-muted">Minyak</small>
-          <h6 class="fw-bold">Minyak Goreng</h6>
-          <p class="mb-1 text-muted small">1L</p>
-          <div class="d-flex justify-content-between align-items-center">
-            <strong><del class="text-muted me-2">$10</del> $8</strong>
-            <button class="btn btn-sm btn-outline-dark rounded-pill d-flex align-items-center btn-add-to-cart">
-              <i class="bi bi-cart me-1"></i> Add
-            </button>
-          </div>
-        </div>
-      </div>
-    
-      <!-- Produk 4 -->
-      <div class="col-6 col-md-4 col-lg-3 product">
-        <div class="border rounded-4 p-3 shadow-sm h-100 position-relative">
-          <span class="badge bg-warning text-dark position-absolute top-0 start-0 m-2">Populer</span>
-          <div class="product-img-wrapper mb-3">
-            <img src="assets/indomi.png" alt="Indomie Goreng" class="product-img" />
-          </div>
-          <small class="text-muted">Makanan Instan</small>
-          <h6 class="fw-bold">Indomie Goreng</h6>
-          <p class="mb-1 text-muted small">1 pcs</p>
-          <div class="d-flex justify-content-between align-items-center">
-            <strong>$2</strong>
-            <button class="btn btn-sm btn-outline-dark rounded-pill d-flex align-items-center btn-add-to-cart">
-              <i class="bi bi-cart me-1"></i> Add
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-6 col-md-4 col-lg-3 product d-none extra-product">
-        <div class="border rounded-4 p-3 shadow-sm h-100 position-relative">
-          <span class="badge bg-warning text-dark position-absolute top-0 start-0 m-2">Populer</span>
-          <div class="product-img-wrapper mb-3">
-            <img src="assets/indomi.png" alt="Indomie Goreng" class="product-img" />
-          </div>
-          <small class="text-muted">Makanan Instan</small>
-          <h6 class="fw-bold">Indomie Goreng</h6>
-          <p class="mb-1 text-muted small">1 pcs</p>
-          <div class="d-flex justify-content-between align-items-center">
-            <strong>$2</strong>
-            <button class="btn btn-sm btn-outline-dark rounded-pill d-flex align-items-center btn-add-to-cart">
-              <i class="bi bi-cart me-1"></i> Add
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-6 col-md-4 col-lg-3 product d-none extra-product">
-        <div class="border rounded-4 p-3 shadow-sm h-100 position-relative">
-          <span class="badge bg-warning text-dark position-absolute top-0 start-0 m-2">Populer</span>
-          <div class="product-img-wrapper mb-3">
-            <img src="assets/indomi.png" alt="Indomie Goreng" class="product-img" />
-          </div>
-          <small class="text-muted">Makanan Instan</small>
-          <h6 class="fw-bold">Indomie Goreng</h6>
-          <p class="mb-1 text-muted small">1 pcs</p>
-          <div class="d-flex justify-content-between align-items-center">
-            <strong>$2</strong>
-            <button class="btn btn-sm btn-outline-dark rounded-pill d-flex align-items-center btn-add-to-cart">
-              <i class="bi bi-cart me-1"></i> Add
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-6 col-md-4 col-lg-3 product d-none extra-product">
-        <div class="border rounded-4 p-3 shadow-sm h-100 position-relative">
-          <span class="badge bg-warning text-dark position-absolute top-0 start-0 m-2">Populer</span>
-          <div class="product-img-wrapper mb-3">
-            <img src="assets/indomi.png" alt="Indomie Goreng" class="product-img" />
-          </div>
-          <small class="text-muted">Makanan Instan</small>
-          <h6 class="fw-bold">Indomie Goreng</h6>
-          <p class="mb-1 text-muted small">1 pcs</p>
-          <div class="d-flex justify-content-between align-items-center">
-            <strong>$2</strong>
-            <button class="btn btn-sm btn-outline-dark rounded-pill d-flex align-items-center btn-add-to-cart">
-              <i class="bi bi-cart me-1"></i> Add
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-6 col-md-4 col-lg-3 product d-none extra-product">
-        <div class="border rounded-4 p-3 shadow-sm h-100 position-relative">
-          <span class="badge bg-warning text-dark position-absolute top-0 start-0 m-2">Populer</span>
-          <div class="product-img-wrapper mb-3">
-            <img src="assets/indomi.png" alt="Indomie Goreng" class="product-img" />
-          </div>
-          <small class="text-muted">Makanan Instan</small>
-          <h6 class="fw-bold">Indomie Goreng</h6>
-          <p class="mb-1 text-muted small">1 pcs</p>
-          <div class="d-flex justify-content-between align-items-center">
-            <strong>$2</strong>
-            <button class="btn btn-sm btn-outline-dark rounded-pill d-flex align-items-center btn-add-to-cart">
-              <i class="bi bi-cart me-1"></i> Add
-            </button>
-          </div>
-        </div>
-      </div>
-      
-     </div>
-     <div class="text-center mt-4">
-        <button class="btn btn-outline-success px-4 py-2 rounded-pill fw-semibold btn-see-more">
-          Lihat Lebih Banyak
-        </button>
-      </div>
-      
-    </div>
-    </div>
-
-<!-- delivery -->
-  </section>
-  <section class="py-5">
-    <div class="container">
-      <div class="rounded-4 px-4 px-md-5 py-5" style="background-color: #064F4E;">
-        <div class="row justify-content-center align-items-center g-2">
-          <!-- Konten Kiri -->
-          <div class="col-lg-5 text-white">
-            <h2 class="fw-bold mb-4">
-              Males keluar rumah? <br>Tenang aja
-              <span class="text-warning fst-italic">Bisa di anter kok!</span>
-            </h2>
-  
-            <!-- Ikon dan teks -->
-            <div class="d-flex flex-column gap-3 mb-4">
-              <div class="d-flex align-items-center gap-2">
-                <i class="bi bi-tags"></i>
-                <span>Harga bersahabat</span>
-              </div>
-  
-              <!-- Dropdown toggle -->
-              <div>
-                <a
-                  class="d-flex align-items-center gap-2 text-white text-decoration-none"
-                  data-bs-toggle="collapse"
-                  href="#collapseSyarat"
-                  role="button"
-                  aria-expanded="false"
-                  aria-controls="collapseSyarat"
-                >
-                  <i class="bi bi-truck"></i>
-                  <span>Di antar sampai rumah <small>s&k berlaku</small></span>
-                </a>
-                <div class="collapse mt-2 text-white-50" id="collapseSyarat">
-                  <small>Pengantaran hanya tersedia untuk area tertentu dengan minimal belanja Rp200.000. Pengiriman dilakukan setiap hari pukul 8.00 - 18.00 WIB.</small>
+        <div class="row g-4">
+            <!-- Produk 1 -->
+            <div class="col-6 col-md-4 col-lg-3 product ">
+              <div class="border rounded-4 p-3 shadow-sm h-100 position-relative">
+                <span class="badge bg-info position-absolute top-0 start-0 m-2">New</span>
+                <div class="product-img-wrapper mb-3">
+                  <img src="assets/brokoli.png" alt="Broccoli" class="product-img" />
+                </div>
+                <small class="text-muted">Sayuran</small>
+                <h6 class="fw-bold product-name">Brokoli</h6>
+                <p class="mb-1 text-muted small">500gm</p>
+                <div class="d-flex justify-content-between align-items-center">
+                   <p class="product-price" data-price="25000">Rp25.000</p>
+                  <button class="btn btn-sm btn-outline-dark rounded-pill d-flex align-items-center btn-add-to-cart "data-id="brocoli">
+                    <i class="bi bi-cart me-1"></i> Add
+                  </button>
                 </div>
               </div>
             </div>
-  
-            <!-- Tombol scroll ke produk -->
-            <a href="#produk" class="btn btn-light px-4 py-2 rounded-pill fw-semibold shadow-sm" style="color: #064F4E;">
-              Order Now
-            </a>
+      
+            <!-- Produk 2 -->
+            <div class="col-6 col-md-4 col-lg-3 product">
+              <div class="border rounded-4 p-3 shadow-sm h-100 position-relative">
+                <span class="badge bg-success position-absolute top-0 start-0 m-2">Populer</span>
+                <div class="product-img-wrapper mb-3">
+                  <img src="assets/tehbotol.png" alt="Teh Botol" class="product-img" />
+                </div>
+                <small class="text-muted">Minuman</small>
+                <h6 class="fw-bold product-name">Teh Botol</h6>
+                <p class="mb-1 text-muted small">350ml</p>
+                <div class="d-flex justify-content-between align-items-center">
+                   <p class="product-price" data-price="5000">Rp5.000</p>
+                  <button class="btn btn-sm btn-outline-dark rounded-pill d-flex align-items-center btn-add-to-cart"data-id="tehbotol">
+                    <i class="bi bi-cart me-1"></i> Add
+                  </button>
+                </div>
+              </div>
+            </div>
+          
+            <!-- Produk 3 -->
+            <div class="col-6 col-md-4 col-lg-3 product">
+              <div class="border rounded-4 p-3 shadow-sm h-100 position-relative">
+                <span class="badge bg-danger position-absolute top-0 start-0 m-2">Diskon</span>
+                <div class="product-img-wrapper mb-3">
+                  <img src="assets/minyak.png" alt="Minyak Goreng" class="product-img" />
+                </div>
+                <small class="text-muted">Minyak</small>
+                <h6 class="fw-bold product-name">Minyak Goreng</h6>
+                <p class="mb-1 text-muted small">1L</p>
+                <div class="d-flex justify-content-between align-items-center">
+                      <p class="mb-0 text-muted text-decoration-line-through small">Rp25.000</p>
+                      <p class="mb-0 fw-bold text-danger product-price" data-price="25000" data-original="15000">Rp15.000</p>
+                  <button class="btn btn-sm btn-outline-dark rounded-pill d-flex align-items-center btn-add-to-cart"data-id="minyak">
+                    <i class="bi bi-cart me-1"></i> Add
+                  </button>
+                </div>
+              </div>
+            </div>
+          
+            <!-- Produk 4 -->
+            <div class="col-6 col-md-4 col-lg-3 product">
+              <div class="border rounded-4 p-3 shadow-sm h-100 position-relative">
+                 <span class="badge bg-success position-absolute top-0 start-0 m-2">Populer</span>
+                <div class="product-img-wrapper mb-3">
+                  <img src="assets/indomi.png" alt="Indomie Goreng" class="product-img" />
+                </div>
+                <small class="text-muted">Makanan Instan</small>
+                <h6 class="fw-bold product-name">Indomie Goreng</h6>
+                <p class="mb-1 text-muted small">10 pcs</p>
+                <div class="d-flex justify-content-between align-items-center">
+                    <p class="product-price" data-price="18500">Rp18.500</p>
+                  <button class="btn btn-sm btn-outline-dark rounded-pill d-flex align-items-center btn-add-to-cart"data-id="indomie">
+                    <i class="bi bi-cart me-1"></i> Add
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- produk5 -->
+
+            <div class="col-6 col-md-4 col-lg-3 product"> 
+                <div class="border rounded-4 p-3 shadow-sm h-100 position-relative">
+                    <span class="badge bg-danger position-absolute top-0 start-0 m-2">Diskon</span>
+                  <div class="product-img-wrapper mb-3">
+                    <img src="assets/susu.png" alt="Susu" class="product-img" />
+                  </div>
+                  <small class="text-muted">Minuman</small>
+                  <h6 class="fw-bold product-name">Susu</h6>
+                  <p class="mb-1 text-muted small">200ml</p>
+                  <div class="d-flex justify-content-between align-items-center">
+                      <p class="mb-0 text-muted text-decoration-line-through small">Rp30.000</p>
+                      <p class="mb-0 fw-bold text-danger product-price" data-price="19000" data-original="30000">Rp19.000</p>
+                    <button class="btn btn-sm btn-outline-dark rounded-pill d-flex align-items-center btn-add-to-cart"data-id="susu">
+                      <i class="bi bi-cart me-1"></i> Add
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+               <!-- Produk 1 -->
+            <div class="col-6 col-md-4 col-lg-3 product ">
+              <div class="border rounded-4 p-3 shadow-sm h-100 position-relative">
+                <span class="badge bg-info position-absolute top-0 start-0 m-2">New</span>
+                <div class="product-img-wrapper mb-3">
+                  <img src="assets/brokoli.png" alt="Broccoli" class="product-img" />
+                </div>
+                <small class="text-muted">Sayuran</small>
+                <h6 class="fw-bold product-name">Brokoli</h6>
+                <p class="mb-1 text-muted small">500gm</p>
+                <div class="d-flex justify-content-between align-items-center">
+                   <p class="product-price" data-price="25000">Rp25.000</p>
+                  <button class="btn btn-sm btn-outline-dark rounded-pill d-flex align-items-center btn-add-to-cart "data-id="brocoli">
+                    <i class="bi bi-cart me-1"></i> Add
+                  </button>
+                </div>
+              </div>
+            </div>
+      
+            <!-- Produk 2 -->
+            <div class="col-6 col-md-4 col-lg-3 product">
+              <div class="border rounded-4 p-3 shadow-sm h-100 position-relative">
+                <span class="badge bg-success position-absolute top-0 start-0 m-2">Populer</span>
+                <div class="product-img-wrapper mb-3">
+                  <img src="assets/tehbotol.png" alt="Teh Botol" class="product-img" />
+                </div>
+                <small class="text-muted">Minuman</small>
+                <h6 class="fw-bold product-name">Teh Botol</h6>
+                <p class="mb-1 text-muted small">350ml</p>
+                <div class="d-flex justify-content-between align-items-center">
+                   <p class="product-price" data-price="5000">Rp5.000</p>
+                  <button class="btn btn-sm btn-outline-dark rounded-pill d-flex align-items-center btn-add-to-cart"data-id="tehbotol">
+                    <i class="bi bi-cart me-1"></i> Add
+                  </button>
+                </div>
+              </div>
+            </div>
+          
+            <!-- Produk 3 -->
+            <div class="col-6 col-md-4 col-lg-3 product">
+              <div class="border rounded-4 p-3 shadow-sm h-100 position-relative">
+                <span class="badge bg-danger position-absolute top-0 start-0 m-2">Diskon</span>
+                <div class="product-img-wrapper mb-3">
+                  <img src="assets/minyak.png" alt="Minyak Goreng" class="product-img" />
+                </div>
+                <small class="text-muted">Minyak</small>
+                <h6 class="fw-bold product-name">Minyak Goreng</h6>
+                <p class="mb-1 text-muted small">1L</p>
+                <div class="d-flex justify-content-between align-items-center">
+                      <p class="mb-0 text-muted text-decoration-line-through small">Rp25.000</p>
+                      <p class="mb-0 fw-bold text-danger product-price" data-price="15000" data-original="25000">Rp15.000</p>
+                  <button class="btn btn-sm btn-outline-dark rounded-pill d-flex align-items-center btn-add-to-cart"data-id="minyak">
+                    <i class="bi bi-cart me-1"></i> Add
+                  </button>
+                </div>
+              </div>
+            </div>
+          
+            <!-- Produk 4 -->
+            <div class="col-6 col-md-4 col-lg-3 product">
+              <div class="border rounded-4 p-3 shadow-sm h-100 position-relative">
+                 <span class="badge bg-success position-absolute top-0 start-0 m-2">Populer</span>
+                <div class="product-img-wrapper mb-3">
+                  <img src="assets/indomi.png" alt="Indomie Goreng" class="product-img" />
+                </div>
+                <small class="text-muted">Makanan Instan</small>
+                <h6 class="fw-bold product-name">Indomie Goreng</h6>
+                <p class="mb-1 text-muted small">10 pcs</p>
+                <div class="d-flex justify-content-between align-items-center">
+                    <p class="product-price" data-price="18500">Rp18.500</p>
+                  <button class="btn btn-sm btn-outline-dark rounded-pill d-flex align-items-center btn-add-to-cart"data-id="indomie">
+                    <i class="bi bi-cart me-1"></i> Add
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- produk5 -->
+
+            <div class="col-6 col-md-4 col-lg-3 product  d-none extra-product"> 
+                <div class="border rounded-4 p-3 shadow-sm h-100 position-relative">
+                    <span class="badge bg-danger position-absolute top-0 start-0 m-2">Diskon</span>
+                  <div class="product-img-wrapper mb-3">
+                    <img src="assets/susu.png" alt="Susu" class="product-img" />
+                  </div>
+                  <small class="text-muted">Minuman</small>
+                  <h6 class="fw-bold product-name">Susu</h6>
+                  <p class="mb-1 text-muted small">200ml</p>
+                  <div class="d-flex justify-content-between align-items-center">
+                      <p class="mb-0 text-muted text-decoration-line-through small">Rp30.000</p>
+                      <p class="mb-0 fw-bold text-danger product-price" data-price="19000" data-original="30000">Rp19.000</p>
+                    <button class="btn btn-sm btn-outline-dark rounded-pill d-flex align-items-center btn-add-to-cart"data-id="susu">
+                      <i class="bi bi-cart me-1"></i> Add
+                    </button>
+                  </div>
+                </div>
+              </div>
+            
+              <div class="col-6 col-md-4 col-lg-3 product d-none extra-product">
+              <div class="border rounded-4 p-3 shadow-sm h-100 position-relative">
+                 <span class="badge bg-success position-absolute top-0 start-0 m-2">Populer</span>
+                <div class="product-img-wrapper mb-3">
+                  <img src="assets/indomi.png" alt="Indomie Goreng" class="product-img" />
+                </div>
+                <small class="text-muted">Makanan Instan</small>
+                <h6 class="fw-bold product-name">Indomie Goreng</h6>
+                <p class="mb-1 text-muted small">10 pcs</p>
+                <div class="d-flex justify-content-between align-items-center">
+                    <p class="product-price" data-price="18500">Rp18.500</p>
+                  <button class="btn btn-sm btn-outline-dark rounded-pill d-flex align-items-center btn-add-to-cart"data-id="indomie">
+                    <i class="bi bi-cart me-1"></i> Add
+                  </button>
+                </div>
+              </div>
+            </div>
+              
+            </div>
+            <div class="text-center mt-4">
+                <button class="btn btn-outline-success px-4 py-2 rounded-pill fw-semibold btn-see-more">
+                  Lihat Lebih Banyak
+                </button>
+              </div>
+            </div>
           </div>
-  
-          <!-- Gambar Kanan -->
-          <div class="col-lg-5 text-center">
-            <img src="assets/delivery.png" alt="Kurir" class="img-fluid" style="max-height: 450px;">
+
+    <!-- delivery -->
+      </section>
+      <section class="py-5">
+        <div class="container">
+          <div class="rounded-4 px-4 px-md-5 py-5" style="background-color: #064F4E;">
+            <div class="row justify-content-center align-items-center g-2">
+              <!-- Konten Kiri -->
+              <div class="col-lg-5 text-white">
+                <h2 class="fw-bold mb-4">
+                  Males keluar rumah? <br>Tenang aja
+                  <span class="text-warning fst-italic">Bisa di anter kok!</span>
+                </h2>
+      
+                <!-- Ikon dan teks -->
+                <div class="d-flex flex-column gap-3 mb-4">
+                  <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-tags"></i>
+                    <span>Harga bersahabat</span>
+                  </div>
+      
+                  <!-- Dropdown toggle -->
+                  <div>
+                    <a
+                      class="d-flex align-items-center gap-2 text-white text-decoration-none"
+                      data-bs-toggle="collapse"
+                      href="#collapseSyarat"
+                      role="button"
+                      aria-expanded="false"
+                      aria-controls="collapseSyarat"
+                    >
+                      <i class="bi bi-truck"></i>
+                      <span>Di antar sampai rumah <small>s&k berlaku</small></span>
+                    </a>
+                    <div class="collapse mt-2 text-white-50" id="collapseSyarat">
+                      <small>Pengantaran hanya tersedia untuk area tertentu dengan minimal belanja Rp200.000. Pengiriman dilakukan setiap hari pukul 8.00 - 18.00 WIB.</small>
+                    </div>
+                  </div>
+                </div>
+      
+                <!-- Tombol scroll ke produk -->
+                <a href="#produk" class="btn btn-light px-4 py-2 rounded-pill fw-semibold shadow-sm" style="color: #064F4E;">
+                  Order Now
+                </a>
+              </div>
+      
+              <!-- Gambar Kanan -->
+              <div class="col-lg-5 text-center">
+                <img src="assets/delivery.png" alt="Kurir" class="img-fluid" style="max-height: 450px;">
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
-  </section>
+      </section>
   
-
   <!-- ratingg -->
   <div class="rating-section container">
     <div class="rating-initial text-center">
@@ -710,7 +725,7 @@
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="js/script.js"></script>
-  <script src="js/logikalogin.js"></script>
+  <script src="js/second.js"></script>
   <script src="js/logikacart.js"></script>
 </body>
 </html>

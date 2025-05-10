@@ -74,3 +74,17 @@ document.addEventListener('DOMContentLoaded', function () {
         }, 300);
     });
 });
+
+// logika buat buka more produk di section produk
+ document.addEventListener("DOMContentLoaded", function () {
+    const btnSeeMore = document.querySelector(".btn-see-more");
+    const extraProducts = document.querySelectorAll(".extra-product");
+
+    btnSeeMore.addEventListener("click", function () {
+      extraProducts.forEach((product) => {
+        product.classList.remove("d-none");
+      });
+      // Sembunyikan tombol setelah ditampilkan semua
+      btnSeeMore.style.display = "none";
+    });
+  });
