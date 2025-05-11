@@ -11,6 +11,7 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet" />
   <!-- Google Fonts: Montserrat -->
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzFtzmxFIEGAeqEUxeh5dOLGjo=" crossorigin="" />
   <!-- Custom CSS -->
   <link rel="stylesheet" href="style/style.css" />
 </head>
@@ -50,20 +51,33 @@
             </ul>
 
             <!-- Keranjang & Login di kanan -->
-            <div class="d-flex gap-3 align-items-center">
-              <a href="#" class="text-dark text-decoration-none d-flex align-items-center position-relative open-cart">
-                <i class="bi bi-basket custom-icon fs-5"></i>
-                <span class="ms-1">Keranjang</span>
-                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger d-none" id="cartBadge">0</span>
+                      <!-- Pesanan, Keranjang & Login di kanan -->
+              <div class="d-flex gap-3 align-items-center">
+                <!-- Pesanan -->
+              <!-- Tambahkan sebelum icon keranjang -->
+             <a href="#" class="text-dark text-decoration-none d-flex align-items-center position-relative"
+                id="orderIcon" data-bs-toggle="modal" data-bs-target="#orderStatusModal">
+                <i class="bi bi-receipt-cutoff fs-5"></i>
+                <span class="ms-1">Pesanan</span>
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger d-none"
+                      id="orderBadge">1</span>
               </a>
-              <a href="#" class="text-dark text-decoration-none d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#loginModal">
-                <i class="bi bi-person-circle custom-icon"></i><span class="ms-1">Login</span>
-              </a>
-            </div>
 
+
+                <!-- Keranjang -->
+                <a href="#" class="text-dark text-decoration-none d-flex align-items-center position-relative open-cart" data-bs-toggle="offcanvas" data-bs-target="#cartSidebar">
+                  <i class="bi bi-basket custom-icon fs-5"></i>
+                  <span class="ms-1">Keranjang</span>
+                  <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger d-none" id="cartBadge">0</span>
+                </a>
+
+                <!-- Login -->
+                <a href="#" class="text-dark text-decoration-none d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#loginModal">
+                  <i class="bi bi-person-circle custom-icon"></i><span class="ms-1">Login</span>
+                </a>
+              </div>
           </div>
         </div>
-
     </div>
   </nav>
 
@@ -113,11 +127,149 @@
         <strong>Total:</strong>
         <span id="cartTotal">Rp0</span>
       </div>
-      <button class="btn btn-success w-100">Checkout</button>
+<button class="btn btn-success w-100" data-bs-toggle="modal" data-bs-target="#checkoutModal">Checkout</button>
+
     </div>
   </div>
 </div>
 
+<!-- Modal Checkout -->
+<div class="modal fade" id="checkoutModal" tabindex="-1" aria-labelledby="checkoutModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content">
+            <form id="orderForm">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="checkoutModalLabel">Detail Pesanan</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body overflow-auto" style="max-height: 70vh;">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <img src="assets/trump.png" alt="Avatar" class="rounded-circle object-fit-cover" style="width:60px; height:60px;">
+                        <div>
+                            <strong id="userName">Nama User</strong><br>
+                            <small class="text-muted">Profil pengguna</small>
+                        </div>
+                    </div>
+
+                    <div id="orderDetails"></div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Jarak dari toko (KM)</label>
+                        <input type="text" id="distance" class="form-control" value="Menghitung..." readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Ongkir</label>
+                        <input type="text" id="shippingCost" class="form-control" value="Menghitung..." readonly>
+                    </div>
+                    <div id="map-container-checkout" class="mb-3" style="height: 200px; width: 100%;">
+                    </div>
+                    <input type="hidden" id="userLocationLat">
+                    <input type="hidden" id="userLocationLng">
+
+                    <div class="mb-3">
+                        <label for="orderAddress" class="form-label">Alamat Anda</label>
+                        <input type="text" id="orderAddress" class="form-control" placeholder="Nyalakan GPS supaya lokasi aktif" readonly>
+                        <input type="hidden" id="userLocation">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="paymentMethod" class="form-label">Metode Pembayaran</label>
+                        <select class="form-select" id="paymentMethod" required>
+                            <option value="">-- Pilih metode --</option>
+                            <option value="transfer">Transfer Bank</option>
+                            <option value="cod">Bayar di Tempat</option>
+                            <option value="qris">QRIS</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Total + Ongkir</label>
+                        <p id="totalWithShipping" class="mb-0">Rp0</p>
+                    </div>
+                </div>
+
+                <div id="checkoutTotalContainer" class="d-flex justify-content-between align-items-center border-top pt-3 mt-3 px-3">
+                    <strong>Total Belanja:</strong>
+                    <div id="checkoutTotal" class="text-end">Rp0</div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success w-100">Buat Pesanan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal Pesanan -->
+<div class="modal fade" id="orderStatusModal" tabindex="-1" aria-labelledby="orderStatusModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="orderStatusModalLabel">Status Pesanan Anda</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+      </div>
+      <div class="modal-body">
+
+        <!-- Roadmap Status -->
+        <div class="d-flex justify-content-between text-center mb-4">
+          <div>
+            <i class="bi bi-bag-check-fill fs-2 text-primary"></i>
+            <div>Diproses</div>
+          </div>
+          <div>
+            <i class="bi bi-truck fs-2 text-warning"></i>
+            <div>Dikirim</div>
+          </div>
+          <div>
+            <i class="bi bi-house-door fs-2 text-success"></i>
+            <div>Sampai</div>
+          </div>
+        </div>
+
+        <hr>
+
+        <!-- Detail Pesanan -->
+        <h6 class="fw-bold mb-2">Detail Pesanan</h6>
+        <div id="orderDetails" class="mb-3">
+          <!-- Contoh item -->
+          <div class="d-flex justify-content-between border-bottom py-2">
+            <div>
+              <div class="fw-bold">Nama Produk 1</div>
+              <small>Jumlah: 2</small>
+            </div>
+            <div class="text-end fw-semibold">Rp40.000</div>
+          </div>
+          <div class="d-flex justify-content-between border-bottom py-2">
+            <div>
+              <div class="fw-bold">Nama Produk 2</div>
+              <small>Jumlah: 1</small>
+            </div>
+            <div class="text-end fw-semibold">Rp25.000</div>
+          </div>
+        </div>
+
+        <!-- Metode Pembayaran -->
+        <div class="mb-3">
+          <h6 class="fw-bold">Metode Pembayaran</h6>
+          <p class="mb-0">Transfer Bank (BCA)</p>
+        </div>
+
+        <!-- Alamat Pengiriman -->
+        <div class="mb-3">
+          <h6 class="fw-bold">Alamat Pengiriman</h6>
+          <p class="mb-0">Jl. Contoh Raya No. 123, Jakarta Barat, DKI Jakarta, 11460</p>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-success" onclick="selesaikanPesanan()">Selesaikan Pesanan</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 
 <!-- Modal Login -->
@@ -724,6 +876,7 @@
 
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qLKXuZ/ZwY6J1PVdrjzu1CIwaUigUcQ=" crossorigin=""></script>
   <script src="js/script.js"></script>
   <script src="js/second.js"></script>
   <script src="js/logikacart.js"></script>

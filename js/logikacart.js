@@ -1,15 +1,23 @@
 let isLoggedIn = false;
 let cartCount = 0;
-const cartItems = {}; // Menyimpan produk yang sudah ditambahkan
-
+const cartItems = {};
 const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
 const registerModal = new bootstrap.Modal(document.getElementById('registerModal'));
 const cartOffcanvas = new bootstrap.Offcanvas(document.getElementById('cartSidebar'));
+const checkoutModalElement = document.getElementById('checkoutModal');
+const checkoutModal = new bootstrap.Modal(checkoutModalElement);
+const orderBadge = document.getElementById('orderBadge');
+
+let leafletMapCheckout; // Variabel untuk menyimpan instance peta Leaflet di checkout
+let userMarkerCheckout; // Variabel untuk menyimpan marker lokasi pengguna di checkout
+let distanceLine; // Variabel untuk menyimpan garis jarak
+const tokoLat = -6.26222430306444; // Koordinat toko Anda (ganti dengan koordinat toko Anda)
+const tokoLng = 106.52494354240288; // Koordinat toko Anda (ganti dengan koordinat toko Anda)
+const hargaPerKm = 5000; // Harga per KM (sesuai contoh HTML Anda)
 
 document.addEventListener('DOMContentLoaded', function () {
-    const addButtons = document.querySelectorAll('.btn-add-to-cart');
-
-    addButtons.forEach((btn) => {
+    // Event listener untuk tombol "Add to Cart"
+    document.querySelectorAll('.btn-add-to-cart').forEach(btn => {
         btn.addEventListener('click', function (e) {
             if (!isLoggedIn) {
                 e.preventDefault();
@@ -24,18 +32,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 animateToCart(img);
                 cartCount++;
-                const badge = document.getElementById('cartBadge');
-                badge.classList.remove('d-none');
-                badge.innerText = cartCount;
-                badge.classList.add('bounce-badge');
-                setTimeout(() => badge.classList.remove('bounce-badge'), 600);
-
+                updateCartBadge();
                 updateCartSidebar(productId, name, price, imgSrc);
             }
         });
     });
 
-    // Buka keranjang
+    // Event listener untuk tombol "Open Cart"
     document.querySelectorAll('.open-cart').forEach(btn => {
         btn.addEventListener('click', function (e) {
             e.preventDefault();
@@ -47,9 +50,8 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // Login
-    const loginForm = document.getElementById('loginForm');
-    loginForm.addEventListener('submit', function (e) {
+    // Event listener untuk form login
+    document.getElementById('loginForm').addEventListener('submit', function (e) {
         e.preventDefault();
         const email = document.getElementById('loginEmail').value;
         const password = document.getElementById('loginPassword').value;
@@ -57,21 +59,21 @@ document.addEventListener('DOMContentLoaded', function () {
             isLoggedIn = true;
             loginModal.hide();
             alert('Login sukses!');
+            document.getElementById('userName').innerText = "Nama User (Contoh)";
         } else {
             alert('Silakan masukkan email dan password.');
         }
     });
 
-    // Register
-    const showRegisterLink = document.getElementById('showRegister');
-    showRegisterLink.addEventListener('click', function (e) {
+    // Event listener untuk menampilkan modal register
+    document.getElementById('showRegister').addEventListener('click', function (e) {
         e.preventDefault();
         loginModal.hide();
         registerModal.show();
     });
 
-    const registerForm = document.getElementById('registerForm');
-    registerForm.addEventListener('submit', function (e) {
+    // Event listener untuk form register
+    document.getElementById('registerForm').addEventListener('submit', function (e) {
         e.preventDefault();
         const name = document.getElementById('registerName').value;
         const email = document.getElementById('registerEmail').value;
@@ -84,9 +86,109 @@ document.addEventListener('DOMContentLoaded', function () {
             alert('Silakan isi semua kolom dengan benar.');
         }
     });
+
+    // Event listener untuk menampilkan modal checkout dan mengisi alamat otomatis dengan peta
+    checkoutModalElement.addEventListener('show.bs.modal', async function () {
+        if (!isLoggedIn) {
+            checkoutModal.hide();
+            loginModal.show();
+            return;
+        }
+        if (Object.keys(cartItems).length === 0) {
+            checkoutModal.hide();
+            alert("Keranjang kosong.");
+            return;
+        }
+
+        showOrderDetails();
+        await initCheckoutMap(); // Inisialisasi peta dan dapatkan lokasi
+        document.getElementById('orderAddress').readOnly = false;
+        document.getElementById('orderAddress').placeholder = "Nyalakan GPS supaya lokasi aktif";
+        document.getElementById('distance').value = "Menghitung..."; // Inisialisasi nilai jarak
+        document.getElementById('shippingCost').value = "Menghitung..."; // Inisialisasi nilai ongkir
+        document.getElementById('totalWithShipping').innerText = "Menghitung...";
+    });
+
+    // Event listener untuk form order (di dalam modal checkout)
+    document.getElementById('orderForm').addEventListener('submit', async function (e) {
+        e.preventDefault();
+        const address = document.getElementById('orderAddress').value;
+        const payment = document.getElementById('paymentMethod').value;
+        const userLocationLat = document.getElementById('userLocationLat').value;
+        const userLocationLng = document.getElementById('userLocationLng').value;
+        const shippingCost = document.getElementById('shippingCost').value.replace('Rp', '').replace('.', '');
+
+        if (!payment || !userLocationLat || !userLocationLng) {
+            alert("Mohon aktifkan lokasi Anda dan pilih metode pembayaran.");
+            return;
+        }
+
+        const totalBelanja = Object.values(cartItems).reduce((acc, item) => acc + item.price * item.qty, 0);
+        const total = totalBelanja + parseInt(shippingCost);
+
+        const orderData = {
+            items: JSON.parse(JSON.stringify(cartItems)),
+            total: total,
+            address: address,
+            location: `${userLocationLat},${userLocationLng}`,
+            payment: payment,
+            shipping: parseInt(shippingCost),
+            date: new Date().toLocaleString()
+        };
+
+        localStorage.setItem('lastOrder', JSON.stringify(orderData));
+
+        checkoutModal.hide();
+        cartOffcanvas.hide();
+        alert("Pesanan berhasil dibuat!");
+
+        cartCount = 0;
+        updateCartBadge();
+        document.getElementById('cartSidebarBody').innerHTML = "";
+        for (let id in cartItems) delete cartItems[id];
+        updateTotal();
+
+        document.getElementById('orderAddress').value = "";
+        document.getElementById('paymentMethod').value = "";
+        document.getElementById('userLocationLat').value = "";
+        document.getElementById('userLocationLng').value = "";
+        document.getElementById('distance').value = "Menghitung...";
+        document.getElementById('shippingCost').value = "Rp0";
+        document.getElementById('totalWithShipping').innerText = "Rp0";
+
+        orderBadge.classList.remove('d-none');
+    });
+
+    // Event listener untuk menampilkan modal status pesanan
+    document.getElementById('orderIcon').addEventListener('click', function (e) {
+        e.preventDefault();
+        const orderData = JSON.parse(localStorage.getItem('lastOrder'));
+        if (!orderData) {
+            alert("Belum ada pesanan.");
+            return;
+        }
+
+        const orderDetails = document.getElementById('orderDetails');
+        orderDetails.innerHTML = '';
+
+        for (let id in orderData.items) {
+            const item = orderData.items[id];
+            const div = document.createElement('div');
+            div.className = 'mb-2';
+            div.innerHTML = `<div class="d-flex justify-content-between">
+                <span>${item.name} x${item.qty}</span>
+                <strong>Rp${(item.qty * item.price).toLocaleString()}</strong>
+            </div>`;
+            orderDetails.appendChild(div);
+        }
+
+        document.getElementById('checkoutTotal').innerText = "Rp" + orderData.total.toLocaleString();
+        document.getElementById('shippingCost').innerText = "Rp" + orderData.shipping.toLocaleString();
+        document.getElementById('totalWithShipping').innerText = "Rp" + orderData.total.toLocaleString();
+        new bootstrap.Modal(document.getElementById('orderStatusModal')).show();
+    });
 });
 
-// Animasi gambar ke keranjang
 function animateToCart(imgElement) {
     const cartIcon = document.querySelector('.open-cart i');
     const imgClone = imgElement.cloneNode(true);
@@ -97,10 +199,9 @@ function animateToCart(imgElement) {
     imgClone.style.left = imgRect.left + 'px';
     imgClone.style.top = imgRect.top + 'px';
     imgClone.style.width = imgRect.width + 'px';
-    imgClone.style.height = imgRect.height + 'px';
+    imgClone.style.height = imgClone.height + 'px';
     imgClone.style.zIndex = 9999;
     imgClone.style.transition = 'all 0.8s ease-in-out';
-
     document.body.appendChild(imgClone);
 
     setTimeout(() => {
@@ -115,11 +216,9 @@ function animateToCart(imgElement) {
     }, 900);
 }
 
-// Sidebar keranjang
 function updateCartSidebar(productId, name, price, imgSrc) {
     const sidebarBody = document.getElementById('cartSidebarBody');
     let item = document.querySelector(`#sidebar-item-${productId}`);
-
     if (item) {
         updateQty(productId, 1);
         return;
@@ -130,16 +229,16 @@ function updateCartSidebar(productId, name, price, imgSrc) {
     item.id = `sidebar-item-${productId}`;
     item.innerHTML = `
         <div class="d-flex align-items-start gap-2">
-          <img src="${imgSrc}" alt="${name}" width="50" height="50" style="object-fit:cover; border-radius:8px;">
-          <div>
-            <strong>${name}</strong><br>
-            <small class="text-muted">Rp${parseInt(price).toLocaleString()}</small>
-          </div>
+            <img src="${imgSrc}" alt="${name}" width="50" height="50" style="object-fit:cover; border-radius:8px;">
+            <div>
+                <strong>${name}</strong><br>
+                <small class="text-muted">Rp${parseInt(price).toLocaleString()}</small>
+            </div>
         </div>
         <div class="d-flex align-items-center gap-1">
-          <button class="btn btn-sm btn-outline-secondary" onclick="updateQty('${productId}', -1)">−</button>
-          <span id="qty-${productId}">1</span>
-          <button class="btn btn-sm btn-outline-secondary" onclick="updateQty('${productId}', 1)">+</button>
+            <button class="btn btn-sm btn-outline-secondary" onclick="updateQty('${productId}', -1)">−</button>
+            <span id="qty-${productId}">1</span>
+            <button class="btn btn-sm btn-outline-secondary" onclick="updateQty('${productId}', 1)">+</button>
         </div>
     `;
     sidebarBody.appendChild(item);
@@ -153,37 +252,25 @@ function updateCartSidebar(productId, name, price, imgSrc) {
     updateTotal();
 }
 
-// Ubah jumlah produk dan hapus jika qty 0
 function updateQty(productId, change) {
     const qtyElement = document.getElementById(`qty-${productId}`);
     const currentQty = parseInt(qtyElement.innerText);
     const newQty = currentQty + change;
 
     if (newQty < 1) {
-        const itemElement = document.getElementById(`sidebar-item-${productId}`);
-        if (itemElement) itemElement.remove();
-
+        document.getElementById(`sidebar-item-${productId}`).remove();
         cartCount -= currentQty;
-        if (cartCount <= 0) {
-            cartCount = 0;
-            document.getElementById('cartBadge').classList.add('d-none');
-        } else {
-            document.getElementById('cartBadge').innerText = cartCount;
-        }
-
         delete cartItems[productId];
     } else {
         qtyElement.innerText = newQty;
         cartItems[productId].qty = newQty;
-
         cartCount += change;
-        document.getElementById('cartBadge').innerText = cartCount;
     }
 
+    updateCartBadge();
     updateTotal();
 }
 
-// Hitung total
 function updateTotal() {
     const totalElement = document.getElementById('cartTotal');
     let total = 0;
@@ -191,4 +278,147 @@ function updateTotal() {
         total += cartItems[id].price * cartItems[id].qty;
     }
     totalElement.innerText = "Rp" + total.toLocaleString();
+}
+
+function updateCartBadge() {
+    const badge = document.getElementById('cartBadge');
+    if (cartCount <= 0) {
+        badge.classList.add('d-none');
+    } else {
+        badge.classList.remove('d-none');
+        badge.innerText = cartCount;
+        badge.classList.add('bounce-badge');
+        setTimeout(() => badge.classList.remove('bounce-badge'), 600);
+    }
+}
+
+function showOrderDetails() {
+    const orderDetails = document.getElementById('orderDetails');
+    orderDetails.innerHTML = '';
+    for (let id in cartItems) {
+        const item = cartItems[id];
+        const div = document.createElement('div');
+        div.className = 'mb-2';
+        div.innerHTML = `<div class="d-flex justify-content-between">
+            <span>${item.name} x${item.qty}</span>
+            <strong>Rp${(item.qty * item.price).toLocaleString()}</strong>
+        </div>`;
+        orderDetails.appendChild(div);
+    }
+    const total = Object.values(cartItems).reduce((acc, item) => acc + item.price * item.qty, 0);
+    document.getElementById('checkoutTotal').innerText = "Rp" + total.toLocaleString();
+}
+
+function calculateDistance(lat1, lon1, lat2, lon2) {
+    const R = 6371; // Radius bumi dalam km
+    const dLat = toRad(lat2 - lat1);
+    const dLon = toRad(lon2 - lon1);
+    const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const distance = R * c; // Jarak dalam km
+    return distance;
+}
+
+function toRad(degree) {
+    return degree * Math.PI / 180;
+}
+
+async function initCheckoutMap() {
+    if (!navigator.geolocation) {
+        alert("Geolocation tidak didukung di browser ini.");
+        return;
+    }
+
+    const mapContainerId = 'map-container-checkout';
+
+    // Pastikan elemen peta ada
+    if (!document.getElementById(mapContainerId)) {
+        const mapContainer = document.createElement('div');
+        mapContainer.id = mapContainerId;
+        mapContainer.style.height = '200px';
+        mapContainer.style.width = '100%';
+        document.getElementById('checkoutModal').querySelector('.modal-body').insertBefore(mapContainer, document.getElementById('orderAddress').parentNode);
+    }
+
+    try {
+        const position = await new Promise((resolve, reject) => {
+            navigator.geolocation.getCurrentPosition(resolve, reject);
+        });
+
+        const { latitude, longitude } = position.coords;
+
+        document.getElementById('userLocationLat').value = latitude;
+        document.getElementById('userLocationLng').value = longitude;
+
+        const distance = calculateDistance(latitude, longitude, tokoLat, tokoLng);
+        const ongkir = Math.ceil(distance * hargaPerKm);
+
+        document.getElementById('distance').value = distance.toFixed(2);
+        document.getElementById('shippingCost').value = ongkir.toLocaleString();
+        const totalBelanja = Object.values(cartItems).reduce((acc, item) => acc + item.price * item.qty, 0);
+        document.getElementById('totalWithShipping').innerText = `Rp${(totalBelanja + ongkir).toLocaleString()}`;
+
+        // Inisialisasi peta jika belum ada
+        if (!leafletMapCheckout) {
+            leafletMapCheckout = L.map(mapContainerId).setView([latitude, longitude], 15);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(leafletMapCheckout);
+
+            const tokoMarker = L.marker([tokoLat, tokoLng]).addTo(leafletMapCheckout).bindPopup("📍 Toko Kami").openPopup();
+            userMarkerCheckout = L.marker([latitude, longitude]).addTo(leafletMapCheckout).bindPopup("📍 Lokasi Anda").openPopup();
+
+            // Tambahkan garis yang menunjukkan jarak
+            distanceLine = L.polyline([[latitude, longitude], [tokoLat, tokoLng]], {color: 'red'}).addTo(leafletMapCheckout);
+
+            // Perbarui tampilan peta agar mencakup kedua marker
+            leafletMapCheckout.fitBounds([
+                [latitude, longitude],
+                [tokoLat, tokoLng]
+            ]);
+        } else {
+            leafletMapCheckout.setView([latitude, longitude], 15);
+            userMarkerCheckout.setLatLng([latitude, longitude]).bindPopup("📍 Lokasi Anda").openPopup();
+
+            // Perbarui garis jarak
+            distanceLine.setLatLngs([[latitude, longitude], [tokoLat, tokoLng]]);
+
+             // Perbarui tampilan peta agar mencakup kedua marker
+            leafletMapCheckout.fitBounds([
+                [latitude, longitude],
+                [tokoLat, tokoLng]
+            ]);
+        }
+
+    } catch (error) {
+        let errorMessage = "Gagal mendapatkan lokasi.";
+        if (error.code === error.PERMISSION_DENIED) {
+            errorMessage = "Izin lokasi ditolak. Mohon aktifkan izin lokasi di browser Anda.";
+        } else if (error.code === error.POSITION_UNAVAILABLE) {
+            errorMessage = "Informasi lokasi tidak tersedia. Pastikan GPS Anda aktif dan coba lagi.";
+        } else if (error.code === error.TIMEOUT) {
+            errorMessage = "Waktu tunggu untuk mendapatkan lokasi habis. Coba lagi.";
+        } else {
+            errorMessage = "Terjadi kesalahan yang tidak diketahui saat mendapatkan lokasi.";
+        }
+        alert(errorMessage);
+        document.getElementById('orderAddress').readOnly = true;
+        document.getElementById('orderAddress').placeholder = errorMessage;
+        document.getElementById('distance').value = "Tidak Tersedia";
+        document.getElementById('shippingCost').value = "Tidak Tersedia";
+        document.getElementById('totalWithShipping').innerText = "Tidak Tersedia";
+
+        // Inisialisasi peta dengan lokasi default jika gagal mendapatkan lokasi pengguna
+        if (!leafletMapCheckout) {
+            leafletMapCheckout = L.map(mapContainerId).setView([tokoLat, tokoLng], 13); // Fokus ke lokasi toko
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(leafletMapCheckout);
+            L.marker([tokoLat, tokoLng]).addTo(leafletMapCheckout).bindPopup("📍 Toko Kami").openPopup();
+        }
+    }
 }
