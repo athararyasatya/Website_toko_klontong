@@ -281,8 +281,16 @@ transform: scale(1.1); /* Zoom in saat hover */
   color: #fff;
 }
 
+/* dropdon
+ */
+  @media (max-width: 576px) {
+  #paymentMethod {
+    font-size: 1rem;
+    padding: 10px 12px;
+    border-radius: 10px;
+  }
+}
 
-  
 /* Responsif  delivery*/
 @media (max-width: 768px) {
   html{
